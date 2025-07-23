@@ -8,12 +8,22 @@ TRACE_LOG() {
   set -x
 }
 
+TRACE_RESET() {
+  # ✅ 關閉 trace
+  set +x
+  unset BASH_XTRACEFD
+
+  # 🔄 把 stdout 與 stderr 恢復到終端（tty）
+  exec &>/dev/tty
+}
+
 LOAD_CONFIG() {
   # 載入設定檔，若不存在則終止
   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   CONFIG_FILE="${SCRIPT_DIR}/config"
 
   if [[ ! -f "${CONFIG_FILE}" ]]; then
+    TRACE_RESET
     echo "[ERROR] Config file not found: ${CONFIG_FILE}"
     exit 1
   fi
@@ -74,7 +84,7 @@ sign_server_cert() {
 
 cleanup() {
   echo "[*] Cleanup: CA serial, CSR..."
-  rm -f "${CA_CRT%.crt}.srl" "$SERVER_CSR"
+  rm -f "${CA_CRT%.crt}.srl" "$SERVER_CSR" "$V3_EXT"
 }
 
 # === MAIN ===
@@ -88,11 +98,7 @@ main() {
   write_v3_ext
   sign_server_cert
   cleanup
-  set +x
-  echo "[✔] All done."
+  echo "All done."
 }
 
-# Only run if script is executed, not sourced
-if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  main
-fi
+main
