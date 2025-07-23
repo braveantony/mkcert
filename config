@@ -1,0 +1,19 @@
+# CA 相關設定
+CA_KEY="ca.key"
+CA_CRT="ca.crt"
+CA_DAYS=3650
+CA_SUBJ="/C=TW/ST=Taipei/L=Taipei/O=tarokok8s/OU=Personal/CN=Personal Root CA"
+
+# Server 相關設定
+DOMAIN_NAME="example.com"
+SERVER_KEY="${DOMAIN_NAME}.key"
+SERVER_CSR="${DOMAIN_NAME}.csr"
+SERVER_CRT="${DOMAIN_NAME}.crt"
+SERVER_DAYS=3650
+SERVER_SUBJ="/C=TW/ST=Taipei/L=Taipei/O=tarokok8s/OU=Personal/CN=${DOMAIN_NAME}"
+V3_EXT="v3.ext"
+
+ALT_NAMES=(
+  "DNS.1=*.${DOMAIN_NAME}"
+  "DNS.2=${DOMAIN_NAME}"
+)
